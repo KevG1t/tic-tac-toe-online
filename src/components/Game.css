@@ -16,6 +16,7 @@
 }
 
 body {
+  position: relative;
   margin: 0;
   display: flex;
   justify-content: center;
@@ -32,7 +33,6 @@ body {
 
 
 .board {
-  position: relative;
   width: fit-content;
   margin: 40px auto;
   text-align: center;
@@ -40,7 +40,7 @@ body {
 
 #x, #o{
   position: absolute;
-  font-size: 4rem;
+  font-size: 2.8rem;
 }
 
 
@@ -51,7 +51,7 @@ body {
 }
 
 #o {
-  top: 0;
+  bottom: 0;
   right: 0;
   animation: scale 2s alternate infinite;
 }
@@ -75,6 +75,7 @@ body {
 }
 
 .menu {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,6 +214,3 @@ input {
   border-radius: 5px;
 }
 
-.board.menu{
- margin: 12rem 0;
-}
