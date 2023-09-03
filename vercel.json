@@ -2,7 +2,8 @@
     "rewrites": [
       {
         "source": "/(.*)",
-        "destination": "https://tic-tac-toe-online-qynqhecpf-kevg1t.vercel.app/"
+        "destination": "/index.html"
+
       }
     ]
   }
