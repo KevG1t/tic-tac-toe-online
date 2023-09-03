@@ -5,7 +5,9 @@ import { Server as SocketServer } from 'socket.io'
 const app = express()
 const server = http.createServer(app)
 const io = new SocketServer(server)
-// app.use(cors())
+app.use(cors({
+  origin: 'https://tic-tac-toe-online-7dgm.vercel.app/',
+}));
 
 // Almacena las partidas activas con sus claves
 const activeGames = new Map()
