@@ -20,5 +20,9 @@ export default defineConfig({
         ws: true
       }
     }
+  },
+  base: '/tic-tac-toe-online/',
+  server: {
+    base: '/tic-tac-toe-online/'
   }
 })
