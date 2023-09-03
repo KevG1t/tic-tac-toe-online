@@ -7,7 +7,7 @@ export default defineConfig({
   server: {//para servir el mismo dominio
     proxy: {
       '/socket.io': {
-        target: '/',
+        target: 'http://localhost:3000',
         ws: true
       }
     }
