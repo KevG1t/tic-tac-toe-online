@@ -70,6 +70,7 @@ function Game ({ isOnline }) {
 
       socket.on('winner-by-disconnect', (socketID) => {
         setWinner(TURNS.X)
+        confetti()
       })
 
       return () => socket.off('updateGame')

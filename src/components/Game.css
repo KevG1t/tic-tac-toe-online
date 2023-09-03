@@ -19,6 +19,7 @@ body {
   margin: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -31,9 +32,46 @@ body {
 
 
 .board {
+  position: relative;
   width: fit-content;
   margin: 40px auto;
   text-align: center;
+}
+
+#x, #o{
+  position: absolute;
+  font-size: 4rem;
+}
+
+
+#x {
+  top:0;
+  left: 0;
+  animation: spin 10s linear infinite;
+}
+
+#o {
+  top: 0;
+  right: 0;
+  animation: scale 2s alternate infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
 }
 
 .menu {
@@ -173,4 +211,8 @@ input {
   outline: none;
   border: 1px solid #6e6c6c;
   border-radius: 5px;
+}
+
+.board.menu{
+ margin: 12rem 0;
 }
