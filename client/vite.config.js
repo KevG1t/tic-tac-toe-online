@@ -10,7 +10,8 @@ export default defineConfig({
         target: 'http://localhost:3000',
         ws: true
       }
-    }
+    },
+    base: '/tic-tac-toe-online/'
   },
   build: {
     //para redirigir las solicitudes a /socket.io al servidor de desarrollo
@@ -21,8 +22,5 @@ export default defineConfig({
       }
     }
   },
-  base: '/tic-tac-toe-online/',
-  server: {
-    base: '/tic-tac-toe-online/'
-  }
+  base: '/tic-tac-toe-online/'
 })
