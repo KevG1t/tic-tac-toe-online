@@ -4,12 +4,12 @@ import react from '@vitejs/plugin-react-swc'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    base: '/tic-tac-toe-online/',
-    http2: true,
-  },
-  build: {
-    base: '/tic-tac-toe-online/',
-    minify: true,
-  },
+  server: {//para servir el mismo dominio
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        ws: true
+      }
+    }
+  }
 })
