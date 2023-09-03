@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "homepage": "http://KevG1t/",
+    "homepage": "http://KevG1t/tic-tac-toe-online",
     "dev": "vite",
     "deploy": "gh-pages -d dist",
     "build": "vite build",
