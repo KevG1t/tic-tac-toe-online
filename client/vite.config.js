@@ -7,7 +7,7 @@ export default defineConfig({
   server: {//para servir el mismo dominio
     proxy: {
       '/socket.io': {
-        target: 'https://kevg1t.github.io/tic-tac-toe-online',
+        target: 'http://localhost:3000',
         ws: true
       }
     }
