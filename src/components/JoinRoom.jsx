@@ -18,7 +18,7 @@ export function JoinRoom ({ socket, handleClick }) {
     event.preventDefault()
     setRoomCode(value)
   }
-  //conectar
+  // conectar
   useEffect(() => {
     socket.connect()
     if (roomCode) {
@@ -26,19 +26,18 @@ export function JoinRoom ({ socket, handleClick }) {
 
       socket.on('game-start', (roomCode) => {
         if (roomCode) {
-        navigate(`/game/${roomCode}`, {replace: true})
+          navigate(`/game/${roomCode}`, { replace: true })
         }
       })
 
-      socket.on('join-failed', ({message}) => {
+      socket.on('join-failed', ({ message }) => {
         setError(message)
       })
 
-      socket.on('game-exists', ({message}) => {
+      socket.on('game-exists', ({ message }) => {
         setError(message)
         window.location.reload()
       })
-
     }
     // TODO: return
   }, [roomCode])
@@ -48,7 +47,7 @@ export function JoinRoom ({ socket, handleClick }) {
       <form onSubmit={handleSubmit}>
         <h2>Codigo de sala</h2>
         <input autoComplete='off' onChange={handleChange} value={value} type='text' placeholder='Codigo de sala' />
-        {error && <span style={{color:'red'}} >{error}</span>}
+        {error && <span style={{ color: 'red' }} >{error}</span>}
         <button>Ingresar a sala</button>
       </form>
       <button onClick={handleClick}>Cancelar</button>

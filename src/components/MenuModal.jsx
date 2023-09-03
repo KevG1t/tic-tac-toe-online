@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MENU_ACTIONS } from '../constants'
@@ -15,7 +14,7 @@ export function MenuModal ({ action }) {
   const handleClick = () => {
     setShow(false)
     socket.disconnect()
-    navigate('/', {replace: true})
+    navigate('/', { replace: true })
   }
   return (
     <section className='winner'>

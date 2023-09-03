@@ -14,7 +14,7 @@ import { useSocketStore } from '../store/socket.js'
 function Game ({ isOnline }) {
   const socket = useSocketStore(state => state.socket)
   const [canPlay, setCanPlay] = useState(true)
-  const {roomCode: code} = useParams()
+  const { roomCode: code } = useParams()
   const [roomCode] = useState(code)
   const navigate = useNavigate()
 
@@ -47,12 +47,10 @@ function Game ({ isOnline }) {
   // socket rival
   useEffect(() => {
     if (isOnline) {
-     
       if (!socket.connected) {
-        navigate('/', {replace: true})
-      } 
+        navigate('/', { replace: true })
+      }
       socket.on('updateGame', (index) => {
-
         const newBoard = [...board]
         newBoard[index] = TURNS.O
         setBoard(newBoard)
@@ -90,7 +88,7 @@ function Game ({ isOnline }) {
         socket.emit('play', { index, roomCode })
         setCanPlay(false)
       }
-  
+
       const newWinner = checkWinner(newBoard)
       if (newWinner) {
         setWinner(newWinner)

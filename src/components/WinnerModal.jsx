@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+
 import { Square } from './Square.jsx'
 
 export function WinnerModal ({ winner, resetGame, isOnline }) {
-  if (winner === null) return null
   const navigate = useNavigate()
+  if (winner === null) return null
   const winnerText = winner === false ? 'Empate' : 'Ganó:'
-  const redirec = () => navigate('/', {replace: true})
+  const redirec = () => navigate('/', { replace: true })
   return (
     <section className='winner'>
       <div className='text'>
