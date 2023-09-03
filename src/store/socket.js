@@ -3,7 +3,7 @@ import { create } from 'zustand'
 
 export const useSocketStore = create((set, get) => {
     return {
-        socket: io('/', {
+        socket: io('https://socket-server-rnp0.onrender.com/', {
             autoConnect: false
         })
     }
