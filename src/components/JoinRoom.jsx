@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useInput } from '../hooks/useInput'
 import { useNavigate } from 'react-router-dom'
+import { useSocketStore } from '../store/socket'
 
-export function JoinRoom ({ socket, handleClick }) {
+export function JoinRoom ({ handleCancel }) {
+  const socket = useSocketStore(state => state.socket)
   const [roomCode, setRoomCode] = useState(null)
   const [error, setError] = useState(null)
   const { value, updateValue } = useInput()
@@ -39,6 +41,7 @@ export function JoinRoom ({ socket, handleClick }) {
         window.location.reload()
       })
     }
+    return () => socket.off('game-start', 'join-failed', 'game-exists')
     // TODO: return
   }, [roomCode])
 
@@ -50,7 +53,7 @@ export function JoinRoom ({ socket, handleClick }) {
         {error && <span style={{ color: 'red' }} >{error}</span>}
         <button>Ingresar a sala</button>
       </form>
-      <button onClick={handleClick}>Cancelar</button>
+      <button onClick={handleCancel}>Cancelar</button>
     </div>
   )
 }

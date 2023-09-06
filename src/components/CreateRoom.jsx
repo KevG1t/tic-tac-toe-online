@@ -1,12 +1,14 @@
 import { CopyIncon } from '../Icons'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSocketStore } from '../store/socket'
 
-export function CreateRoom ({ socket, handleClick }) {
+export function CreateRoom ({ handleCancel }) {
+  const socket = useSocketStore(state => state.socket)
   const [copied, setCopied] = useState(false)
   const roomCode = useRef(crypto.randomUUID())
   const navigate = useNavigate()
-
+  // copia el id
   const copyId = () => {
     navigator.clipboard.writeText(roomCode.current)
     setCopied(true)
@@ -18,6 +20,7 @@ export function CreateRoom ({ socket, handleClick }) {
     socket.on('game-start', () => {
       navigate(`/game/${roomCode.current}`, { replace: true })
     })
+    return () => socket.off('game-start')
     // TODO: return
   }, [])
 
@@ -30,7 +33,7 @@ export function CreateRoom ({ socket, handleClick }) {
         {copied && <h6>Copiado!</h6>}
         {copied && <span>esperando oponente...</span>}
 
-        <button onClick={handleClick}>Cancelar</button>
+        <button onClick={handleCancel}>Cancelar</button>
       </div>
     </>
   )

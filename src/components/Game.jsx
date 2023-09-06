@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import confetti from 'canvas-confetti'
 
 import { Square } from './Square.jsx'
@@ -7,119 +7,138 @@ import { checkWinner, checkEndGame } from '../logic/checks.js'
 import { WinnerModal } from './WinnerModal.jsx'
 import { saveGameToStorage, resetGameStorage } from '../logic/storage/saveGame.js'
 
-import './Game.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSocketStore } from '../store/socket.js'
 
-function Game ({ isOnline }) {
+function Game ({ isOnline = false }) {
+  // estados
   const socket = useSocketStore(state => state.socket)
   const [canPlay, setCanPlay] = useState(true)
   const { roomCode: code } = useParams()
   const [roomCode] = useState(code)
+  const [isOffline, setIsOffline] = useState(false)
   const navigate = useNavigate()
 
+  // inicializamos dependiendo el modo de juego
   const [board, setBoard] = useState(
     () => {
       const boardFromStorage = window.localStorage.getItem('board-v2')
-
+      // si es local retornamos del storage
       if (boardFromStorage && !isOnline) return JSON.parse(boardFromStorage)
-
+      // si es online reiniciamos la board
       return Array(9).fill(null)
     }
   )
-
+  // turnos
   const [turn, setTurn] = useState(() => {
+    // online siempre seras X
     if (isOnline) return TURNS.X
+    // cambia el turno localmente
     const turnForStorage = window.localStorage.getItem('turn-v2')
     return turnForStorage ?? TURNS.X
   })
 
-  const [winner, setWinner] = useState(null)
+  const boardRef = useRef(board)
+  useEffect(() => {
+    boardRef.current = board
+  }, [board])
 
+  const [winner, setWinner] = useState(null)
+  // un reset game
   const resetGame = () => {
+    if (!isOnline) {
+      resetGameStorage()
+      setWinner(null)
+    }
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
-
-    resetGameStorage()
+    setCanPlay(true)
+    // setPlayAgain(false)
+    console.log('reseted')
   }
 
-  // socket rival
-  useEffect(() => {
-    if (isOnline) {
-      if (!socket.connected) {
-        navigate('/', { replace: true })
-      }
-      socket.on('updateGame', (index) => {
-        const newBoard = [...board]
-        newBoard[index] = TURNS.O
-        setBoard(newBoard)
-
-        const newWinner = checkWinner(newBoard)
-        if (newWinner) {
-          setWinner(newWinner)
-          confetti()
-        } else if (checkEndGame(newBoard)) {
-          setWinner(false)
-        }
-        setTurn(TURNS.X)
-        setCanPlay(true)
-      })
-
-      socket.on('winner-by-disconnect', (socketID) => {
-        setWinner(TURNS.X)
-        confetti()
-      })
-
-      return () => socket.off('updateGame')
+  const checkAndSetWinner = (board) => {
+    const newWinner = checkWinner(board)
+    if (newWinner) {
+      setWinner(newWinner)
+      confetti()
+    } else if (checkEndGame(board)) {
+      setWinner(false)
     }
-  })
+  }
 
-  function updateBoard (index, roomCode) {
-    if (board[index] || winner) return
+  const logic = (index, TURN, emit) => {
+    // const newBoard = [...board]
+    const newBoard = [...boardRef.current]
+    newBoard[index] = TURN
+    setBoard(newBoard)
+    const newTurn = TURN === TURNS.X ? TURNS.O : TURNS.X
+    setTurn(newTurn)
 
-    // socket
-    if (isOnline) {
-      const newBoard = [...board]
-
-      if (canPlay && board[index] === null) {
-        newBoard[index] = TURNS.X
-        setBoard(newBoard)
-        socket.emit('play', { index, roomCode })
-        setCanPlay(false)
-      }
-
-      const newWinner = checkWinner(newBoard)
-      if (newWinner) {
-        setWinner(newWinner)
-        confetti()
-      } else if (checkEndGame(newBoard)) {
-        setWinner(false)
-      }
-      setTurn(TURNS.O)
-    } else {
-      const newBoard = [...board]
-      newBoard[index] = turn
-      setBoard(newBoard)
-
-      const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
-      setTurn(newTurn)
-
-      // guardar aqui partida
+    if (!isOnline) {
+      // guardar aqui partida si es local
       saveGameToStorage({
         board: newBoard,
         turn: newTurn
       })
+    }
 
-      const newWinner = checkWinner(newBoard)
-      if (newWinner) {
-        setWinner(newWinner)
-        confetti()
-      } else if (checkEndGame(newBoard)) {
-        setWinner(false)
-      }
+    checkAndSetWinner(newBoard)
+
+    if (isOnline && emit) {
+      socket.emit('play', { index, roomCode })
+      setCanPlay(false)
+    } else {
+      setCanPlay(true)
     }
   }
+
+  // actualizaciones del jugador principal
+  function updateBoard (index) {
+    // si la celda esta llena o ya hay un ganador no hacemos nada
+    if (board[index] || winner) return
+    // checkeamos el modo de juego
+    if (isOnline) {
+      if (canPlay && board[index] === null) {
+        logic(index, TURNS.X, true)
+      }
+    } else {
+      logic(index, turn, false)
+    }
+  }
+
+  // actualizaciones del rival
+  useEffect(() => {
+    // chequeamos el modo de juego en online
+    if (isOnline) {
+      // si perdemos conexion retornamos al menu
+      if (!socket.connected) {
+        navigate('/', { replace: true })
+      }
+
+      // actualizamos el juego con el turno de el rival
+      socket.on('updateGame', (index) => {
+        console.log(board)
+        // actualizamos Board y checkeamos si hay un ganador
+        logic(index, TURNS.O, false)
+      })
+      // si el oponente pierde conexion obtenemos la victoria
+      socket.on('winner-by-disconnect', (socketID) => {
+        setIsOffline(true)
+        setWinner(TURNS.X)
+        confetti()
+      })
+    }
+    return () => {
+      socket.off('updateGame')
+      socket.off('winner-by-disconnect')
+    }
+  }, [updateBoard])
+
+  // if (isOnline && winner !== null && playAgain) {
+  //   resetGame()
+  // }
 
   return (
 
@@ -148,7 +167,8 @@ function Game ({ isOnline }) {
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
 
-      <WinnerModal isOnline={isOnline} resetGame={resetGame} winner={winner} />
+            <WinnerModal isOnline={isOnline} resetGame={resetGame} winner={winner} roomCode={roomCode} isOffline={isOffline}/>
+
     </main>
   )
 }

@@ -11,7 +11,7 @@ export function MenuModal ({ action }) {
   const navigate = useNavigate()
   if (!show) return null
 
-  const handleClick = () => {
+  const handleCancel = () => {
     setShow(false)
     socket.disconnect()
     navigate('/', { replace: true })
@@ -20,8 +20,8 @@ export function MenuModal ({ action }) {
     <section className='winner'>
       {
                 action === MENU_ACTIONS.crate
-                  ? <CreateRoom socket={socket} handleClick={handleClick} />
-                  : <JoinRoom socket={socket} handleClick={handleClick} />
+                  ? <CreateRoom handleCancel={handleCancel} />
+                  : <JoinRoom handleCancel={handleCancel} />
             }
     </section>
   )
