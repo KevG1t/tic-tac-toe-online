@@ -64,10 +64,10 @@ export function WinnerModal ({ winner, resetGame, isOnline, isOffline, roomCode 
               isOnline
                 ? (<>
                      <div className='icons'>
-          <i className={classNameX}>❌</i>
-          <i className={classNameO}>⚪</i>
+                      <i className={classNameX}>❌</i>
+                      <i className={classNameO}>⚪</i>
 
-          </div>
+                   </div>
                 {!isOffline
                   ? <button onClick={handlePlayAgain}>
                       Continuar Jugando

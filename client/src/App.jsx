@@ -1,10 +1,10 @@
-import { Link, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Game from './components/Game'
 import { MenuModal } from './components/MenuModal'
 import { MENU_ACTIONS } from './constants'
 import { useSocketStore } from './store/socket'
 import { Menu } from './components/Menu'
-import { LinkedIn, GitHub } from './Icons'
+
 import './App.css'
 
 function App () {
@@ -21,13 +21,6 @@ function App () {
         <Route path='/join-room' element={<MenuModal action={MENU_ACTIONS.join} />} />
         <Route path='*' element={<h1>404</h1>} />
       </Routes>
-      <footer className='footer-menu'>
-        <div>
-        <Link className='f-item' target='_blank' to={'https://www.linkedin.com/in/kevin-corrales-44a9731aa/'}><LinkedIn/></Link>
-        <Link className='f-item' target='_blank' to={'https://github.com/KevG1t'}><GitHub/></Link>
-        </div>
-      <p>&copy; 2023 KevG1t</p>
-      </footer>
     </>
   )
 }

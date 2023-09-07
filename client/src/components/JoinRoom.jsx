@@ -41,7 +41,11 @@ export function JoinRoom ({ handleCancel }) {
         window.location.reload()
       })
     }
-    return () => socket.off('game-start', 'join-failed', 'game-exists')
+    return () => {
+      socket.off('game-start')
+      socket.off('join-failed')
+      socket.off('game-exists')
+    }
     // TODO: return
   }, [roomCode])
 
